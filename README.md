@@ -5,6 +5,6 @@ sudo apt-get upgrade
 sudo reboot
 
 Give ourselves read, write and execute permission:
-sudo chmod 755 hello_world
+sudo chmod 755 asterisk_install
 Run script as root:
 sudo ./asterisk_install
