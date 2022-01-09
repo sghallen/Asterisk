@@ -1,4 +1,4 @@
-# Asterisk
+# Asterisk Installation
 Before running the script, manually run the following commands:
 sudo apt-get update
 sudo apt-get upgrade
