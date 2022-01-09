@@ -10,3 +10,4 @@ Run script as root:
 sudo ./asterisk_install
 
 When the asterisk config file opens, manually change the runuser and rungroup variables to the appropriate user (save with :wq)
+When the empty modules.config file opens, for now save with :wq
