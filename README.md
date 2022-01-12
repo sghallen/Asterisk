@@ -12,9 +12,9 @@ sudo reboot
 
 4) Enter local repo: "cd Asterisk"
 
-5) Give ourselves read, write and execute permission:"sudo chmod 755 asterisk_install"
+5) Give ourselves read, write and execute permission:"sudo chmod 755 asterisk_install.sh"
 
-6) Run script as root: "sudo ./asterisk_install"
+6) Run script as root: "sudo ./asterisk_install.sh"
 
 7) When the asterisk config file opens, manually change the "runuser" and "rungroup" settings under options to the appropriate user (save with :wq)
 
