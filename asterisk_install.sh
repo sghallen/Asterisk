@@ -32,15 +32,13 @@ chown -R asteriskpbx:asteriskpbx /var/run/asterisk/
 mkdir -p /etc/asterisk/
 chown asteriskpbx:asteriskpbx /etc/asterisk/
 
-#copy sample config files
-cp ~/src/asterisk-complete/asterisk/asterisk-18.9.0/configs/samples/indications.conf.sample /etc/asterisk/indications.conf
-cp ~/src/asterisk-complete/asterisk/asterisk-18.9.0/configs/samples/asterisk.conf.sample /etc/asterisk/asterisk.conf
+#copy all sample config files
+cd ~/src/asterisk-complete/asterisk/asterisk-18.9.0/configs/samples/
+for f in ./*; do mv "$f" "/etc/asterisk/${f%.sample}";done
 
 #open the asterisk config file and manually change the runuser and rungroup variables to the appropriate user (save with :wq)
 vim /etc/asterisk/asterisk.conf
 echo "asterisk.conf edited"
-#create empty modules.conf file (save with :wq)
-vim /etc/asterisk/modules.conf
-echo "empty config file created"
+
 #should be able to run asterisk with /usr/sbin/asterisk -cvvv
 echo "run asterisk with /usr/sbin/asterisk -cvvv"
