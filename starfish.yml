@@ -1,0 +1,99 @@
+---
+- hosts: starfish
+  become: yes
+  vars:
+# Use these on first run of this playbook
+    current_mysql_root_password: ""
+    updated_mysql_root_password: "YouNeedAReallyGoodPassword"
+    current_mysql_asterisk_password: ""
+    updated_mysql_asterisk_password: "YouNeedAReallyGoodPasswordHereToo"
+# Comment the above out after the first run
+
+# Uncomment these for subsequent runs
+#   current_mysql_root_password: "YouNeedAReallyGoodPassword"
+#   updated_mysql_root_password: "{{ current_mysql_root_password }}"
+#   current_mysql_asterisk_password: "YouNeedAReallyGoodPasswordHereToo"
+#   updated_mysql_asterisk_password: "{{ current_mysql_asterisk_password }}"
+    
+  tasks:
+  
+  - name: Install epel-release
+    dnf:
+      name: epel-release
+      state: present
+      
+  - name: Install dependencies
+    dnf:
+      name: ['vim','wget','MySQL-python']
+      state: present
+   
+  - name: Install the MySQL repo
+    dnf:
+      name: http://repo.mysql.com/mysql-community-release-el7-5.noarch.rpm
+      state: present
+      
+  - name: Install mysql-server
+    dnf:
+      name: mysql-server
+      state: present
+      
+  - name: Override variables for MySQL (RedHat)
+    set_fact:
+      mysql_daemon: mysqld
+      mysql_packages: ['mysql-server']
+      mysql_log_error: /var/log/mysqld.err
+      mysql_syslog_tag: mysqld
+      mysql_pid_file: /var/run/mysqld/mysqld.pid
+      mysql_socket: /var/lib/mysql/mysql.sock
+    when: ansible_os_family == "RedHat"
+ 
+ - name: Ensure MySQL server is running
+   service:
+      name: mysqld
+      state: started
+      enabled: yes
+   
+  - name: update mysql root pass for localhost root account from local servers
+    mysql_user:
+      login_user: root
+      login_password: "{{ current_mysql_root_password }}"
+      name: root
+      host: "{{ item  }}"
+      password: "{{ updated_mysql_root_password }}"
+    with_items:
+      - localhost
+      
+  - name: update mysql root password for all other local root accounts
+    mysql_user:
+      login_user: root
+      login_password: "{{ updated_mysql_root_password  }}"
+      name: root
+      host: "{{ item }}"
+      password: "{{ updated_mysql_root_password }}"
+    with_items:
+      - "{{ inventory_hostname }}"
+      - 127.0.0.1
+      - ::1
+      - localhost.localdomain
+      
+  - name: asterisk mysql user
+    mysql_db:
+      login_user: root
+      login_password: "{{ updated_mysql_root_password }}"
+      name: asterisk
+      state: present
+      
+  - name: asterisk mysql user
+    mysql_user:
+      login_user: root
+      login_password: "{{ updated_mysql_root_password }}"
+      name: asterisk
+      host: "{{ item }}"
+      password: "{{ current_mysql_asterisk_password }}"
+      priv: "asterisk.*:ALL"
+    with_items:
+      - "{{ inventory_hostname }}"
+      - 127.0.0.1
+      - ::1
+      - localhost
+      - localhost.localdomain
